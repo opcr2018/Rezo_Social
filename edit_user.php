@@ -80,6 +80,7 @@ if (!empty($_FILES) && $_FILES['avatar']['error'] == 0 && !empty($_GET['id'])) {
                 'avatar' => $targetFolder.'/'.$file_rand_name,
                 'id'     => $_SESSION['user_id']              
             ]);
+            
             $_SESSION['avatar'] = $targetFolder.'/'.$file_rand_name;
 
             set_flash('Le fichier a été envoyé avec succès !', 'success');

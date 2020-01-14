@@ -12,7 +12,7 @@
                                         </h5>
                                         <div class="card-body">
                                                 <p class="card-text"> <img
-                                                                src="<?= $user->avatar ? $user->avatar : get_avatar_url(get_session('email'), 50) ?>"
+                                                                src="<?= $user->avatar ? $user->avatar : get_avatar_url($user->email, 50) ?>"
                                                                 alt="image de profil de <?= e($user->pseudo) ?>"
                                                                 class="img-thumbnail avatar-md"><br /></p>
                                                 <div class="row">
