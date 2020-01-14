@@ -1,0 +1,6 @@
+{
+"require-dev" : {
+    "fzaninotto/faker" : "v1.8.0"
+}
+
+}
