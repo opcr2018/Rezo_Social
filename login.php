@@ -25,7 +25,6 @@ if (isset($_POST['login'])) {
         $user = $q->fetch(PDO::FETCH_OBJ);
 
         if ($user && password_verify($password, $user->hashed_password)) {
-
             $_SESSION['pseudo'] = $user->pseudo;
             $_SESSION['user_id'] = $user->id;
             $_SESSION['avatar'] = $user->avatar;
@@ -37,8 +36,7 @@ if (isset($_POST['login'])) {
             save_input_data();
         }
 
-        //var_dump($password);
-        //die();
+
     }
 } else {
     clear_input_data();
