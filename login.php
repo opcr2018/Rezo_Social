@@ -1,5 +1,6 @@
 <?php
 session_start();
+require("includes/init.php");
 require("bootstrap/locale.php");
 include('filters/guest_filter.php');
 require('config/database.php');
@@ -29,6 +30,14 @@ if (isset($_POST['login'])) {
             $_SESSION['user_id'] = $user->id;
             $_SESSION['avatar'] = $user->avatar;
             $_SESSION['email'] = $user->email;
+
+            //si l'utilisateur souhaite de garder sa session active
+            if(isset($_POST['remember_me']) && $_POST['remember_me'] == 'on')
+            {
+                setcookie('pseudo', $user->pseudo, time()+3600*24*365, null, null, false, true);
+                setcookie('user_id', $user->id, time()+3600*24*365, null, null, false, true);
+                setcookie('avatar', $user->avatar, time()+3600*24*365, null, null, false, true);
+            }
 
             redirect_intent_or('profile.php?id=' . $user->id);
         } else {

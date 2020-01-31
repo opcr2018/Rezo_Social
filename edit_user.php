@@ -1,10 +1,11 @@
 <?php
 session_start();
+require("includes/init.php");
 require("bootstrap/locale.php");
 include('filters/auth_filter.php');
-require "config/database.php";
-require "includes/functions.php";
-require "includes/constants.php";
+require('config/database.php');
+require('includes/functions.php');
+require('includes/constants.php');
 
 
 if (!empty($_GET['id']) && $_GET['id'] === get_session('user_id')) {
@@ -64,7 +65,7 @@ if (!empty($_FILES) && $_FILES['avatar']['error'] == 0 && !empty($_GET['id'])) {
         mkdir($targetPath, 0755, true);
     }
     $fileTypes = array('.jepg', '.jpg', '.png', '.gif');
-    $file_name = $_FILES['avatar']['name'];    
+    $file_name = $_FILES['avatar']['name'];
     $file_extension = strrchr($file_name, ".");
     
     $file_rand_name = md5(uniqid(rand())).$file_extension;
@@ -75,17 +76,16 @@ if (!empty($_FILES) && $_FILES['avatar']['error'] == 0 && !empty($_GET['id'])) {
         if (move_uploaded_file($file_tmp_name, $file_path)) {
             $q = $db->prepare("UPDATE users
                                SET avatar = :avatar
-                               WHERE id = :id"); 
+                               WHERE id = :id");
             $q->execute([
                 'avatar' => $targetFolder.'/'.$file_rand_name,
-                'id'     => $_SESSION['user_id']              
+                'id'     => $_SESSION['user_id']
             ]);
             
             $_SESSION['avatar'] = $targetFolder.'/'.$file_rand_name;
 
             set_flash('Le fichier a été envoyé avec succès !', 'success');
             redirect('profile.php?id='.get_session('user_id'));
-            
         } else {
             set_flash("Une erreur est survenue lors de l'envoi du fichier.", 'warning');
         }
