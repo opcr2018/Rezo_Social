@@ -22,9 +22,14 @@
             class="avatar-xs"></a>
         <ul class="dropdown-menu dropdown-menu-lg-right">
           <li
-            class="<?= set_active('profile') ?>">
+          class="<?= set_active('profile') ?>">
             <a class="nav-link"
               href="profile.php?id=<?= get_session('user_id') ?>"><?= $menu['mon_profil'][$_SESSION['locale']] ?></a>
+          </li>
+          <li
+          class="<?= set_active('change_password') ?>">
+            <a class="nav-link"
+              href="change_password.php"><?= $menu['change_password'][$_SESSION['locale']] ?></a>
           </li>
           <li
             class="<?= set_active('edit_user') ?>">
