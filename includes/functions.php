@@ -11,6 +11,99 @@ if (!function_exists('e')) {
     }
 }
 
+// Cell count
+// Retourne le nombre d'enregistrement dans une table donnée
+if (!function_exists('cell_count')) {
+    function cell_count($table, $field_name, $field_value)
+    {
+        global $db;
+        $q = $db->prepare("SELECT * FROM $table WHERE $field_name = ?");
+        $q->execute([$field_value]);
+        return $q->rowCount();
+    }
+}
+
+
+if (!function_exists('remember_me')) {
+    function remember_me($user_id)
+    {
+        global $db;
+
+        // Générer un token de maniere aleatoire
+        $token = openssl_random_pseudo_bytes(24);
+
+        // Générer le sélecteur de maniere aleatoire et s'assurer
+        // que ce dernier est unique
+        do {
+            $selector = openssl_random_pseudo_bytes(9);
+        } while (cell_count('auth_tokens', 'selector', $selector) > 0);
+
+        // Sauvez les infos (user_id, selector, expires(14 jours), token(hashed))
+        // en bdd
+        $q = $db->prepare("INSERT INTO auth_tokens(token, user_id, expires, selector)
+                         VALUES(:token, :user_id, DATE_ADD(NOW(), INTERVAL 14 DAY), :selector)");
+        $q->execute([
+            'user_id'  => $user_id,
+            'token'    => hash('sha256', $token),
+            'selector' => $selector
+        ]);
+
+        // Créer un cookie 'auth' (14 jours expires) httpOnly => true
+        // Contenu: base64_encode(selector).':'.base64_encode(token)
+        setcookie(
+            'auth',
+            base64_encode($selector).':'.base64_encode($token),
+            time()+1209600,
+            null,
+            null,
+            false,
+            true
+        );
+    }
+}
+
+if (!function_exists('auto_login')) {
+    function auto_login()
+    {
+        global $db;
+        // Verifier si le cookie 'auth' existe
+        if (!empty($_COOKIE['auth'])) {
+            $split = explode(':', $_COOKIE['auth']);
+            if (count($split) != 2) {
+                return false;
+            }
+
+            // Récuperer via ce cookie $selector $token
+            list($selector, $token) = $split;
+           
+            $q = $db->prepare("SELECT auth_tokens.id, token, user_id, users.pseudo, users.avatar, users.id, users.email 
+            FROM auth_tokens
+            LEFT JOIN users
+            ON auth_tokens.user_id = users.id
+            WHERE selector = ? AND expires >= CURDATE()");
+            
+            // Décoder notre $selector
+            $q->execute([base64_decode($selector)
+
+            ]);
+
+            $data = $q->fetch(PDO::FETCH_OBJ);
+
+            if ($data) {
+                if (hash_equals($data->token, hash('sha256', base64_decode($token)))) {
+                        $_SESSION['pseudo']  = $data->pseudo;
+                        $_SESSION['user_id'] = $data->id;
+                        $_SESSION['avatar']  = $data->avatar;
+                        $_SESSION['email']   = $data->email;
+        
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
 //Redirect friendly
 if (!function_exists('redirect_intent_or')) {
     function redirect_intent_or($default_url)
@@ -24,7 +117,6 @@ if (!function_exists('redirect_intent_or')) {
         redirect($url);
     }
 }
-
 
 //Get a session value by key
 if (!function_exists('get_session')) {
@@ -97,11 +189,8 @@ if (!function_exists('is_already_in_use')) {
 
         $q = $db->prepare("SELECT id FROM $table WHERE $field = ?");
         $q->execute([$value]);
-
         $count = $q->rowCount();
-
         $q->closeCursor();
-
         return $count;
     }
 }
@@ -157,7 +246,6 @@ if (!function_exists('set_active')) {
     {
         $path = explode('/', $_SERVER['SCRIPT_NAME']);
         $page = array_pop($path);
-
 
         if ($page == $file . '.php') {
             return "active";

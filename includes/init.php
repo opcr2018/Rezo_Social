@@ -1,4 +1,8 @@
 <?php
+require("includes/constants.php");
+require("config/database.php");
+require("includes/functions.php");
+require("bootstrap/locale.php");
 
 if(!empty($_COOKIE['pseudo']) && !empty($_COOKIE['user_id']))
 {
@@ -6,3 +10,6 @@ if(!empty($_COOKIE['pseudo']) && !empty($_COOKIE['user_id']))
     $_SESSION['user_id'] = $_COOKIE['user_id'];
     $_SESSION['avatar'] = $_COOKIE['avatar'];           
 }
+
+
+auto_login();

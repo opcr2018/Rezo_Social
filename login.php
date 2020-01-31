@@ -1,11 +1,7 @@
 <?php
 session_start();
 require("includes/init.php");
-require("bootstrap/locale.php");
 include('filters/guest_filter.php');
-require('config/database.php');
-require('includes/functions.php');
-require('includes/constants.php');
 
 //Si le formulaire a été soumis
 if (isset($_POST['login'])) {
@@ -34,9 +30,7 @@ if (isset($_POST['login'])) {
             //si l'utilisateur souhaite de garder sa session active
             if(isset($_POST['remember_me']) && $_POST['remember_me'] == 'on')
             {
-                setcookie('pseudo', $user->pseudo, time()+3600*24*365, null, null, false, true);
-                setcookie('user_id', $user->id, time()+3600*24*365, null, null, false, true);
-                setcookie('avatar', $user->avatar, time()+3600*24*365, null, null, false, true);
+                remember_me($user->id);
             }
 
             redirect_intent_or('profile.php?id=' . $user->id);

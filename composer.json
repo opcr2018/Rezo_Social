@@ -1,6 +1,8 @@
 {
 "require-dev" : {
     "fzaninotto/faker" : "v1.8.0"
-}
-
+},
+    "require": {
+        "ircmaxell/random-lib": "^1.2"
+    }
 }

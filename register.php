@@ -1,11 +1,8 @@
 <?php
 session_start();
 require("includes/init.php");
-require('bootstrap/locale.php');
 include('filters/guest_filter.php');
-require('config/database.php');
-require('includes/functions.php');
-require('includes/constants.php');
+
 
 //Si le formulaire a été soumis
 if (isset($_POST['register'])) {

@@ -1,11 +1,8 @@
 <?php
 session_start();
 require("includes/init.php");
-require("bootstrap/locale.php");
 include('filters/auth_filter.php');
-require('config/database.php');
-require('includes/functions.php');
-require('includes/constants.php');
+
 
 
 if (!empty($_GET['id']) && $_GET['id'] === get_session('user_id')) {

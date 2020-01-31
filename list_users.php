@@ -1,10 +1,6 @@
 <?php
 session_start();
 require("includes/init.php");
-require("bootstrap/locale.php");
-require("config/database.php");
-require("includes/functions.php");
-require("includes/constants.php");
 
 //recuperer les infos d'user en bdd
 
